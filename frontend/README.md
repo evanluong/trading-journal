@@ -1,16 +1,31 @@
-# React + Vite
+# Trading Journal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack web application for logging and analysing trading activity.
+Built as a portfolio project to demonstrate full-stack engineering skills.
 
-Currently, two official plugins are available:
+## Tech Stack
+- **Frontend:** React (Vite)
+- **Backend:** Node.js + Express
+- **Database:** PostgreSQL
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
+- Log trades with entry price, exit price, symbol and notes
+- View all trades in a clean dashboard
+- RESTful API backend
+- Persistent data storage
 
-## React Compiler
+## Running Locally
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Prerequisites
+- Node.js v18+
+- PostgreSQL
 
-## Expanding the ESLint configuration
+### Backend
+cd backend
+npm install
+node index.js
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Frontend
+cd frontend
+npm install
+npm run dev
