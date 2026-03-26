@@ -22,11 +22,11 @@ app.get('/trades', async (req, res) => {
 });
 
 app.post('/trades', async (req, res) => {
-  const { symbol, entry_price, exit_price, trade_date, notes } = req.body;
+  const { symbol, direction, quantity, entry_price, exit_price, trade_date, notes } = req.body;
   try {
     const result = await pool.query(
-      'INSERT INTO trades (symbol, entry_price, exit_price, trade_date, notes) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [symbol, entry_price, exit_price, trade_date, notes]
+      'INSERT INTO trades (symbol, direction, quantity, entry_price, exit_price, trade_date, notes) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [symbol, direction, quantity, entry_price, exit_price, trade_date, notes]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
