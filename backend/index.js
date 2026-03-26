@@ -35,6 +35,17 @@ app.post('/trades', async (req, res) => {
   }
 });
 
+app.delete('/trades/:id', async (req, res) => {
+  const { id } = req.params
+  try {
+    await pool.query('DELETE FROM trades WHERE id = $1', [id])
+    res.json({ message: 'Trade deleted' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Database error' })
+  }
+})
+
 app.listen(3000, () => {
   console.log('Server running on http://localhost:3000');
 });

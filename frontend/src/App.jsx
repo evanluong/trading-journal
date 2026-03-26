@@ -62,6 +62,13 @@ function App() {
     return ((exit - entry) * qty).toFixed(2)
   }
 
+  function handleDelete(id) {
+    fetch(`http://localhost:3000/trades/${id}`, {
+      method: 'DELETE'
+    })
+      .then(() => fetchTrades())
+  }
+
   return (
     <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px' }}>
       <h1>Trading Journal</h1>
@@ -151,6 +158,7 @@ function App() {
               <th style={{ textAlign: 'left', padding: '8px' }}>P/L</th>
               <th style={{ textAlign: 'left', padding: '8px' }}>Date</th>
               <th style={{ textAlign: 'left', padding: '8px' }}>Notes</th>
+              <th style={{ textAlign: 'left', padding: '8px' }}>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -179,6 +187,14 @@ function App() {
                   </td>
                   <td style={{ padding: '8px' }}>{trade.trade_date?.slice(0, 10)}</td>
                   <td style={{ padding: '8px' }}>{trade.notes}</td>
+                  <td style={{ padding: '8px' }}>
+                    <button
+                      onClick={() => handleDelete(trade.id)}
+                      style={{ padding: '4px 10px', backgroundColor: '#fee2e2', color: '#dc2626', border: '1px solid #dc2626', borderRadius: '4px', cursor: 'pointer' }}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               )
             })}
