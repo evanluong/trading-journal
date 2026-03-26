@@ -3,6 +3,11 @@ import { useState, useEffect } from 'react'
 function App() {
   const [trades, setTrades] = useState([])
   const [loading, setLoading] = useState(true)
+  const [token, setToken] = useState(localStorage.getItem('token'))
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'))
+  const [authMode, setAuthMode] = useState('login')
+  const [authForm, setAuthForm] = useState({ email: '', password: '' })
+  const [authError, setAuthError] = useState('')
   const [form, setForm] = useState({
     symbol: '',
     direction: 'LONG',
@@ -14,16 +19,53 @@ function App() {
   })
 
   useEffect(() => {
-    fetchTrades()
-  }, [])
+    if (token) fetchTrades()
+    else setLoading(false)
+  }, [token])
 
   function fetchTrades() {
-    fetch('http://localhost:3000/trades')
+    fetch('http://localhost:3000/trades', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
       .then(res => res.json())
       .then(data => {
         setTrades(data)
         setLoading(false)
       })
+  }
+
+  function handleAuthChange(e) {
+    setAuthForm({ ...authForm, [e.target.name]: e.target.value })
+  }
+
+  function handleAuth(e) {
+    e.preventDefault()
+    setAuthError('')
+    const url = authMode === 'login' ? '/auth/login' : '/auth/register'
+    fetch(`http://localhost:3000${url}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(authForm)
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          setAuthError(data.error)
+        } else {
+          localStorage.setItem('token', data.token)
+          localStorage.setItem('user', JSON.stringify(data.user))
+          setToken(data.token)
+          setUser(data.user)
+        }
+      })
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setToken(null)
+    setUser(null)
+    setTrades([])
   }
 
   function handleChange(e) {
@@ -34,7 +76,10 @@ function App() {
     e.preventDefault()
     fetch('http://localhost:3000/trades', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify(form)
     })
       .then(res => res.json())
@@ -52,6 +97,14 @@ function App() {
       })
   }
 
+  function handleDelete(id) {
+    fetch(`http://localhost:3000/trades/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(() => fetchTrades())
+  }
+
   function calculatePL(trade) {
     const entry = parseFloat(trade.entry_price)
     const exit = parseFloat(trade.exit_price)
@@ -62,16 +115,70 @@ function App() {
     return ((exit - entry) * qty).toFixed(2)
   }
 
-  function handleDelete(id) {
-    fetch(`http://localhost:3000/trades/${id}`, {
-      method: 'DELETE'
-    })
-      .then(() => fetchTrades())
+  // Show login/register if not logged in
+  if (!token) {
+    return (
+      <div style={{ maxWidth: '400px', margin: '100px auto', padding: '40px', border: '1px solid #eee', borderRadius: '8px' }}>
+        <h1 style={{ marginTop: 0 }}>Trading Journal</h1>
+        <h2>{authMode === 'login' ? 'Login' : 'Register'}</h2>
+
+        {authError && (
+          <p style={{ color: 'red', marginBottom: '12px' }}>{authError}</p>
+        )}
+
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={authForm.email}
+          onChange={handleAuthChange}
+          style={{ width: '100%', padding: '8px', marginBottom: '12px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={authForm.password}
+          onChange={handleAuthChange}
+          style={{ width: '100%', padding: '8px', marginBottom: '12px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+        />
+        <button
+          onClick={handleAuth}
+          style={{ width: '100%', padding: '10px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px' }}
+        >
+          {authMode === 'login' ? 'Login' : 'Register'}
+        </button>
+
+        <p style={{ textAlign: 'center', marginTop: '16px' }}>
+          {authMode === 'login' ? "Don't have an account? " : "Already have an account? "}
+          <span
+            onClick={() => setAuthMode(authMode === 'login' ? 'register' : 'login')}
+            style={{ color: '#2563eb', cursor: 'pointer' }}
+          >
+            {authMode === 'login' ? 'Register' : 'Login'}
+          </span>
+        </p>
+      </div>
+    )
   }
 
+  // Main app (logged in)
   return (
     <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px' }}>
-      <h1>Trading Journal</h1>
+
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+        <h1 style={{ margin: 0 }}>Trading Journal</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span style={{ color: '#666' }}>{user?.email}</span>
+          <button
+            onClick={handleLogout}
+            style={{ padding: '6px 14px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer' }}
+          >
+            Logout
+          </button>
+        </div>
+      </div>
 
       {/* Add Trade Form */}
       <div style={{ marginBottom: '40px', padding: '24px', border: '1px solid #eee', borderRadius: '8px' }}>
