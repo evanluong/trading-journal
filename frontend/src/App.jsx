@@ -8,6 +8,7 @@ function App() {
   const [authMode, setAuthMode] = useState('login')
   const [authForm, setAuthForm] = useState({ email: '', password: '' })
   const [authError, setAuthError] = useState('')
+  const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState({
     symbol: '',
     direction: 'LONG',
@@ -79,10 +80,32 @@ function App() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
+  const emptyForm = { symbol: '', direction: 'LONG', quantity: '', entry_price: '', exit_price: '', trade_date: '', notes: '' }
+
+  function handleEdit(trade) {
+    setEditingId(trade.id)
+    setForm({
+      symbol: trade.symbol,
+      direction: trade.direction,
+      quantity: trade.quantity,
+      entry_price: trade.entry_price,
+      exit_price: trade.exit_price,
+      trade_date: trade.trade_date?.slice(0, 10),
+      notes: trade.notes || ''
+    })
+  }
+
+  function handleCancelEdit() {
+    setEditingId(null)
+    setForm(emptyForm)
+  }
+
   function handleSubmit(e) {
     e.preventDefault()
-    fetch('http://localhost:3000/trades', {
-      method: 'POST',
+    const url = editingId ? `http://localhost:3000/trades/${editingId}` : 'http://localhost:3000/trades'
+    const method = editingId ? 'PUT' : 'POST'
+    fetch(url, {
+      method,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
@@ -92,15 +115,8 @@ function App() {
       .then(res => res.json())
       .then(() => {
         fetchTrades()
-        setForm({
-          symbol: '',
-          direction: 'LONG',
-          quantity: '',
-          entry_price: '',
-          exit_price: '',
-          trade_date: '',
-          notes: ''
-        })
+        setEditingId(null)
+        setForm(emptyForm)
       })
   }
 
@@ -203,7 +219,7 @@ function App() {
 
       {/* Add Trade Form */}
       <div style={{ marginBottom: '40px', padding: '24px', border: '1px solid #eee', borderRadius: '8px' }}>
-        <h2 style={{ marginTop: 0 }}>Add a Trade</h2>
+        <h2 style={{ marginTop: 0 }}>{editingId ? 'Edit Trade' : 'Add a Trade'}</h2>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           <input
             name="symbol"
@@ -261,10 +277,18 @@ function App() {
           />
           <button
             onClick={handleSubmit}
-            style={{ gridColumn: '1 / -1', padding: '10px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px' }}
+            style={{ gridColumn: editingId ? 'auto' : '1 / -1', padding: '10px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px' }}
           >
-            Add Trade
+            {editingId ? 'Update Trade' : 'Add Trade'}
           </button>
+          {editingId && (
+            <button
+              onClick={handleCancelEdit}
+              style={{ padding: '10px', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer', fontSize: '16px' }}
+            >
+              Cancel
+            </button>
+          )}
         </div>
       </div>
 
@@ -337,7 +361,13 @@ function App() {
                   </td>
                   <td style={{ padding: '8px' }}>{trade.trade_date?.slice(0, 10)}</td>
                   <td style={{ padding: '8px' }}>{trade.notes}</td>
-                  <td style={{ padding: '8px' }}>
+                  <td style={{ padding: '8px', display: 'flex', gap: '6px' }}>
+                    <button
+                      onClick={() => handleEdit(trade)}
+                      style={{ padding: '4px 10px', backgroundColor: '#eff6ff', color: '#2563eb', border: '1px solid #2563eb', borderRadius: '4px', cursor: 'pointer' }}
+                    >
+                      Edit
+                    </button>
                     <button
                       onClick={() => handleDelete(trade.id)}
                       style={{ padding: '4px 10px', backgroundColor: '#fee2e2', color: '#dc2626', border: '1px solid #dc2626', borderRadius: '4px', cursor: 'pointer' }}

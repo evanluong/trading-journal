@@ -93,6 +93,22 @@ app.post('/trades', authenticateToken, async (req, res) => {
   }
 })
 
+// UPDATE a trade (protected)
+app.put('/trades/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params
+  const { symbol, direction, quantity, entry_price, exit_price, trade_date, notes } = req.body
+  try {
+    const result = await pool.query(
+      'UPDATE trades SET symbol=$1, direction=$2, quantity=$3, entry_price=$4, exit_price=$5, trade_date=$6, notes=$7 WHERE id=$8 AND user_id=$9 RETURNING *',
+      [symbol, direction, quantity, entry_price, exit_price, trade_date, notes, id, req.user.id]
+    )
+    res.json(result.rows[0])
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Database error' })
+  }
+})
+
 // DELETE a trade (protected)
 app.delete('/trades/:id', authenticateToken, async (req, res) => {
   const { id } = req.params
