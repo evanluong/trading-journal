@@ -1,0 +1,121 @@
+.trade-table-wrap {
+  overflow-x: auto;
+}
+
+.trade-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.trade-table th {
+  text-align: left;
+  padding: 0 16px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-label);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.trade-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.trade-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.trade-table tbody tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+
+.symbol {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.badge--long {
+  background: var(--profit-bg);
+  color: var(--profit);
+}
+
+.badge--short {
+  background: var(--loss-bg);
+  color: var(--loss);
+}
+
+.pl--profit {
+  font-weight: 600;
+  color: var(--profit);
+}
+
+.pl--loss {
+  font-weight: 600;
+  color: var(--loss);
+}
+
+.td-secondary {
+  color: var(--text-secondary);
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-edit {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--primary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-edit:hover {
+  border-color: var(--primary);
+}
+
+.btn-delete {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--loss);
+  background: var(--loss-bg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-delete:hover {
+  opacity: 0.8;
+}
+
+.empty-state,
+.loading-state {
+  text-align: center;
+  padding: 48px 0;
+  color: var(--text-label);
+  font-size: 14px;
+}
