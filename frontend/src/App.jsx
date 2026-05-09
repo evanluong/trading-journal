@@ -27,8 +27,15 @@ function App() {
     fetch('http://localhost:3000/trades', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-      .then(res => res.json())
+      .then(res => {
+        if (res.status === 401 || res.status === 403) {
+          handleLogout()
+          return
+        }
+        return res.json()
+      })
       .then(data => {
+        if (!Array.isArray(data)) return
         setTrades(data)
         setLoading(false)
       })
@@ -113,6 +120,20 @@ function App() {
       return ((entry - exit) * qty).toFixed(2)
     }
     return ((exit - entry) * qty).toFixed(2)
+  }
+
+  function calcStats(trades) {
+    if (trades.length === 0) return null
+    const pls = trades.map(t => parseFloat(calculatePL(t)))
+    const totalPL = pls.reduce((a, b) => a + b, 0)
+    const wins = pls.filter(pl => pl > 0).length
+    return {
+      totalPL: totalPL.toFixed(2),
+      winRate: ((wins / trades.length) * 100).toFixed(0),
+      count: trades.length,
+      best: Math.max(...pls).toFixed(2),
+      worst: Math.min(...pls).toFixed(2),
+    }
   }
 
   // Show login/register if not logged in
@@ -246,6 +267,28 @@ function App() {
           </button>
         </div>
       </div>
+
+      {/* Stats */}
+      {!loading && (() => {
+        const stats = calcStats(trades)
+        if (!stats) return null
+        const plColor = parseFloat(stats.totalPL) >= 0 ? '#16a34a' : '#dc2626'
+        const statCard = (label, value, color) => (
+          <div style={{ flex: 1, padding: '16px', border: '1px solid #eee', borderRadius: '8px', textAlign: 'center' }}>
+            <div style={{ fontSize: '12px', color: '#666', marginBottom: '6px' }}>{label}</div>
+            <div style={{ fontSize: '20px', fontWeight: 'bold', color: color || 'inherit' }}>{value}</div>
+          </div>
+        )
+        return (
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '32px' }}>
+            {statCard('Total P/L', `${parseFloat(stats.totalPL) >= 0 ? '+' : ''}$${stats.totalPL}`, plColor)}
+            {statCard('Win Rate', `${stats.winRate}%`, stats.winRate >= 50 ? '#16a34a' : '#dc2626')}
+            {statCard('Trades', stats.count)}
+            {statCard('Best Trade', `+$${stats.best}`, '#16a34a')}
+            {statCard('Worst Trade', `$${stats.worst}`, '#dc2626')}
+          </div>
+        )
+      })()}
 
       {/* Trades Table */}
       <h2>Your Trades</h2>
