@@ -2,8 +2,7 @@ import './TradeForm.css'
 
 export default function TradeForm({ form, editingId, onChange, onSubmit, onCancel }) {
   return (
-    <div className="card">
-      <p className="section-label">{editingId ? 'Edit Trade' : 'Add Trade'}</p>
+    <div>
       <div className="trade-form__grid">
 
         <div className="form-field">

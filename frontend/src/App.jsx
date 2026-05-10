@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import Auth       from './components/Auth'
+import Modal      from './components/Modal'
 import TradeForm  from './components/TradeForm'
 import StatsPanel from './components/StatsPanel'
 import TradeTable from './components/TradeTable'
@@ -27,7 +28,6 @@ function calcStats(trades) {
     winRate:  ((wins / trades.length) * 100).toFixed(0),
     count:    trades.length,
     best:     Math.max(...pls).toFixed(2),
-    worst:    Math.min(...pls).toFixed(2),
   }
 }
 
@@ -38,10 +38,11 @@ export default function App() {
   const [authForm,  setAuthForm]  = useState({ email: '', password: '' })
   const [authError, setAuthError] = useState('')
 
-  const [trades,     setTrades]     = useState([])
-  const [loading,    setLoading]    = useState(true)
-  const [editingId,  setEditingId]  = useState(null)
-  const [form,       setForm]       = useState(EMPTY_FORM)
+  const [trades,    setTrades]    = useState([])
+  const [loading,   setLoading]   = useState(true)
+  const [showForm,  setShowForm]  = useState(false)
+  const [editingId, setEditingId] = useState(null)
+  const [form,      setForm]      = useState(EMPTY_FORM)
 
   useEffect(() => {
     if (token) fetchTrades()
@@ -91,12 +92,18 @@ export default function App() {
     setTrades([])
   }
 
+  function closeModal() {
+    setShowForm(false)
+    setEditingId(null)
+    setForm(EMPTY_FORM)
+  }
+
   function handleSubmit(e) {
     e.preventDefault()
     const url    = editingId ? `${API}/trades/${editingId}` : `${API}/trades`
     const method = editingId ? 'PUT' : 'POST'
     fetch(url, { method, headers: authHeaders(), body: JSON.stringify(form) })
-      .then(() => { fetchTrades(); setEditingId(null); setForm(EMPTY_FORM) })
+      .then(() => { fetchTrades(); closeModal() })
   }
 
   function handleEdit(trade) {
@@ -110,6 +117,7 @@ export default function App() {
       trade_date:  trade.trade_date?.slice(0, 10),
       notes:       trade.notes || '',
     })
+    setShowForm(true)
   }
 
   function handleDelete(id) {
@@ -139,19 +147,12 @@ export default function App() {
         </div>
         <div className="app-header__user">
           <span className="app-header__email">{user?.email}</span>
+          <button className="btn-add-trade" onClick={() => setShowForm(true)}>+ Add Trade</button>
           <button className="btn-logout" onClick={handleLogout}>Logout</button>
         </div>
       </header>
 
       <StatsPanel stats={calcStats(trades)} />
-
-      <TradeForm
-        form={form}
-        editingId={editingId}
-        onChange={e => setForm({ ...form, [e.target.name]: e.target.value })}
-        onSubmit={handleSubmit}
-        onCancel={() => { setEditingId(null); setForm(EMPTY_FORM) }}
-      />
 
       <div className="card">
         <p className="section-label">Your Trades</p>
@@ -162,6 +163,21 @@ export default function App() {
           onDelete={handleDelete}
         />
       </div>
+
+      {showForm && (
+        <Modal
+          title={editingId ? 'Edit Trade' : 'New Trade'}
+          onClose={closeModal}
+        >
+          <TradeForm
+            form={form}
+            editingId={editingId}
+            onChange={e => setForm({ ...form, [e.target.name]: e.target.value })}
+            onSubmit={handleSubmit}
+            onCancel={closeModal}
+          />
+        </Modal>
+      )}
     </div>
   )
 }
