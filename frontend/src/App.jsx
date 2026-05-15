@@ -43,6 +43,7 @@ export default function App() {
   const [showForm,  setShowForm]  = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [form,      setForm]      = useState(EMPTY_FORM)
+  const [activeTab, setActiveTab] = useState('trading')
 
   useEffect(() => {
     if (token) fetchTrades()
@@ -142,27 +143,66 @@ export default function App() {
     <div className="app-wrapper">
       <header className="app-header">
         <div className="app-header__logo">
-          <div className="app-header__logo-icon">T</div>
-          TradingJournal
+          <div className="app-header__logo-icon">L</div>
+          Ledger
         </div>
+        <nav className="tab-bar">
+          <button
+            className={`tab-btn${activeTab === 'trading' ? ' tab-btn--active' : ''}`}
+            onClick={() => setActiveTab('trading')}
+          >
+            Trading
+          </button>
+          <button
+            className={`tab-btn${activeTab === 'gambling' ? ' tab-btn--active' : ''}`}
+            onClick={() => setActiveTab('gambling')}
+          >
+            Gambling
+          </button>
+          <button
+            className={`tab-btn tab-btn--soon${activeTab === 'soon' ? ' tab-btn--active' : ''}`}
+            onClick={() => setActiveTab('soon')}
+          >
+            •••
+          </button>
+        </nav>
         <div className="app-header__user">
           <span className="app-header__email">{user?.email}</span>
-          <button className="btn-add-trade" onClick={() => setShowForm(true)}>+ Add Trade</button>
           <button className="btn-logout" onClick={handleLogout}>Logout</button>
         </div>
       </header>
 
-      <StatsPanel stats={calcStats(trades)} />
+      {activeTab === 'trading' && (
+        <>
+          <div className="tab-actions">
+            <button className="btn-add-trade" onClick={() => setShowForm(true)}>+ Add Trade</button>
+          </div>
+          <StatsPanel stats={calcStats(trades)} />
+          <div className="card">
+            <p className="section-label">Your Trades</p>
+            <TradeTable
+              trades={trades}
+              loading={loading}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          </div>
+        </>
+      )}
 
-      <div className="card">
-        <p className="section-label">Your Trades</p>
-        <TradeTable
-          trades={trades}
-          loading={loading}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      </div>
+      {activeTab === 'gambling' && (
+        <div className="coming-soon-card">
+          <p className="coming-soon-title">Gambling Tracker</p>
+          <p className="coming-soon-sub">Coming soon</p>
+        </div>
+      )}
+
+      {activeTab === 'soon' && (
+        <div className="coming-soon-card">
+          <p className="coming-soon-title">More tools</p>
+          <p className="coming-soon-sub">Coming soon</p>
+        </div>
+      )}
 
       {showForm && (
         <Modal

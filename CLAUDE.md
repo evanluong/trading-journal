@@ -6,6 +6,9 @@
 - Add trade form: symbol, direction (LONG/SHORT), quantity, entry price, exit price, date, notes
 - Trades table with P/L calculated client-side
 - Delete trade
+- App name is **Ledger** (logo icon "L")
+- Tab bar (Trading | Gambling | •••) lives inside the header, centered between logo and user controls
+- "+ Add Trade" button lives below the header, right-aligned, only shown on the Trading tab
 
 ## Stack
 - **Frontend**: React 19 + Vite, plain inline styles (no CSS framework), single-file App.jsx
