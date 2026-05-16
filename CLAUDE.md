@@ -9,6 +9,9 @@
 - App name is **Ledger** (logo icon "L")
 - Tab bar (Trading | Gambling | •••) lives inside the header, centered between logo and user controls
 - "+ Add Trade" button lives below the header, right-aligned, only shown on the Trading tab
+- Gambling tab fully built: per-game sessions (Blackjack, Roulette, Baccarat checkboxes), per-game stake/outcome, session-level P/L + Win/Loss/Push badge, stats panel
+- gambling_sessions table stores games as JSONB array: [{type, stake, outcome}]
+- Run the CREATE TABLE migration in backend/index.js comments before using the gambling feature
 
 ## Stack
 - **Frontend**: React 19 + Vite, plain inline styles (no CSS framework), single-file App.jsx

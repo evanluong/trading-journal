@@ -121,6 +121,70 @@ app.delete('/trades/:id', authenticateToken, async (req, res) => {
   }
 })
 
+// ── Gambling sessions ──────────────────────────────────────────────────────
+// Required migration (run once in your DB):
+// CREATE TABLE gambling_sessions (
+//   id           SERIAL PRIMARY KEY,
+//   user_id      INTEGER REFERENCES users(id),
+//   session_date DATE NOT NULL,
+//   games        JSONB NOT NULL DEFAULT '[]',
+//   notes        TEXT,
+//   created_at   TIMESTAMPTZ DEFAULT NOW()
+// );
+
+app.get('/gambling-sessions', authenticateToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM gambling_sessions WHERE user_id = $1 ORDER BY session_date DESC',
+      [req.user.id]
+    )
+    res.json(result.rows)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Database error' })
+  }
+})
+
+app.post('/gambling-sessions', authenticateToken, async (req, res) => {
+  const { session_date, games, notes } = req.body
+  try {
+    const result = await pool.query(
+      'INSERT INTO gambling_sessions (session_date, games, notes, user_id) VALUES ($1, $2, $3, $4) RETURNING *',
+      [session_date, JSON.stringify(games), notes, req.user.id]
+    )
+    res.status(201).json(result.rows[0])
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Database error' })
+  }
+})
+
+app.put('/gambling-sessions/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params
+  const { session_date, games, notes } = req.body
+  try {
+    const result = await pool.query(
+      'UPDATE gambling_sessions SET session_date=$1, games=$2, notes=$3 WHERE id=$4 AND user_id=$5 RETURNING *',
+      [session_date, JSON.stringify(games), notes, id, req.user.id]
+    )
+    res.json(result.rows[0])
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Database error' })
+  }
+})
+
+app.delete('/gambling-sessions/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params
+  try {
+    await pool.query('DELETE FROM gambling_sessions WHERE id=$1 AND user_id=$2', [id, req.user.id])
+    res.json({ message: 'Session deleted' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Database error' })
+  }
+})
+
 app.listen(3000, () => {
   console.log('Server running on http://localhost:3000')
 })
