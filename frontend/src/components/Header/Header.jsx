@@ -1,35 +1,20 @@
 import styles from './Header.module.css'
 
-const TABS = [
-  { id: 'trading',  label: 'Trading' },
-  { id: 'gambling', label: 'Gambling' },
-  { id: 'soon',     label: '•••' },
-]
+const PAGE_TITLES = {
+  trading:  'Trading Dashboard',
+  gambling: 'Gambling Dashboard',
+  soon:     'Coming Soon',
+}
 
-export default function Header({ user, activeTab, onTabChange, onLogout }) {
+export default function Header({ activeTab, onMenuClick }) {
   return (
     <header className={styles.header}>
-      <div className={styles.logo}>
+      <button className={styles.logoBtn} onClick={onMenuClick}>
         <div className={styles.logoIcon}>L</div>
-        Ledger
-      </div>
+        <span className={styles.logoText}>Ledger</span>
+      </button>
 
-      <nav className={styles.tabBar}>
-        {TABS.map(tab => (
-          <button
-            key={tab.id}
-            className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''} ${tab.id === 'soon' ? styles.tabSoon : ''}`}
-            onClick={() => onTabChange(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </nav>
-
-      <div className={styles.user}>
-        <span className={styles.email}>{user?.email}</span>
-        <button className={styles.btnLogout} onClick={onLogout}>Logout</button>
-      </div>
+      <h1 className={styles.pageTitle}>{PAGE_TITLES[activeTab]}</h1>
     </header>
   )
 }
