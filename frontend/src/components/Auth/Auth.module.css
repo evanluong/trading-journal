@@ -1,4 +1,4 @@
-.auth-page {
+.page {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -6,7 +6,7 @@
   background: var(--bg);
 }
 
-.auth-card {
+.card {
   width: 100%;
   max-width: 400px;
   background: var(--surface);
@@ -15,7 +15,7 @@
   padding: 40px;
 }
 
-.auth-card__logo {
+.logo {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -25,7 +25,7 @@
   margin-bottom: 6px;
 }
 
-.auth-card__logo-icon {
+.logoIcon {
   width: 30px;
   height: 30px;
   background: var(--primary);
@@ -38,20 +38,20 @@
   color: #fff;
 }
 
-.auth-card__subtitle {
+.subtitle {
   font-size: 13px;
   color: var(--text-secondary);
   margin-bottom: 32px;
 }
 
-.auth-card__heading {
+.heading {
   font-size: 17px;
   font-weight: 600;
   color: var(--text);
   margin-bottom: 22px;
 }
 
-.auth-error {
+.error {
   font-size: 13px;
   color: var(--loss);
   background: var(--loss-bg);
@@ -61,14 +61,14 @@
   margin-bottom: 16px;
 }
 
-.auth-field {
+.field {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-bottom: 14px;
 }
 
-.auth-field label {
+.field label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -76,7 +76,7 @@
   color: var(--text-label);
 }
 
-.auth-field input {
+.field input {
   padding: 10px 12px;
   background: var(--bg);
   border: 1px solid var(--border);
@@ -86,15 +86,15 @@
   transition: border-color 0.15s;
 }
 
-.auth-field input::placeholder {
+.field input::placeholder {
   color: var(--text-label);
 }
 
-.auth-field input:focus {
+.field input:focus {
   border-color: var(--primary);
 }
 
-.btn-primary {
+.btnPrimary {
   width: 100%;
   padding: 11px;
   font-size: 14px;
@@ -108,18 +108,18 @@
   transition: opacity 0.15s;
 }
 
-.btn-primary:hover {
+.btnPrimary:hover {
   opacity: 0.88;
 }
 
-.auth-toggle {
+.toggle {
   text-align: center;
   margin-top: 20px;
   font-size: 13px;
   color: var(--text-secondary);
 }
 
-.auth-toggle button {
+.toggle button {
   background: none;
   border: none;
   color: var(--primary);
@@ -130,6 +130,6 @@
   margin-left: 4px;
 }
 
-.auth-toggle button:hover {
+.toggle button:hover {
   text-decoration: underline;
 }

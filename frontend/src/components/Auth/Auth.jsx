@@ -1,22 +1,22 @@
-import './Auth.css'
+import styles from './Auth.module.css'
 
 export default function Auth({ authMode, authForm, authError, onChange, onSubmit, onToggleMode }) {
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <div className="auth-card__logo">
-          <div className="auth-card__logo-icon">T</div>
-          TradingJournal
+    <div className={styles.page}>
+      <div className={styles.card}>
+        <div className={styles.logo}>
+          <div className={styles.logoIcon}>L</div>
+          Ledger
         </div>
-        <p className="auth-card__subtitle">Track your trades. Learn from every position.</p>
+        <p className={styles.subtitle}>Track your finances. Learn from every session.</p>
 
-        <h2 className="auth-card__heading">
+        <h2 className={styles.heading}>
           {authMode === 'login' ? 'Welcome back' : 'Create an account'}
         </h2>
 
-        {authError && <div className="auth-error">{authError}</div>}
+        {authError && <div className={styles.error}>{authError}</div>}
 
-        <div className="auth-field">
+        <div className={styles.field}>
           <label>Email</label>
           <input
             name="email"
@@ -27,7 +27,7 @@ export default function Auth({ authMode, authForm, authError, onChange, onSubmit
           />
         </div>
 
-        <div className="auth-field">
+        <div className={styles.field}>
           <label>Password</label>
           <input
             name="password"
@@ -38,11 +38,11 @@ export default function Auth({ authMode, authForm, authError, onChange, onSubmit
           />
         </div>
 
-        <button className="btn-primary" onClick={onSubmit}>
+        <button className={styles.btnPrimary} onClick={onSubmit}>
           {authMode === 'login' ? 'Sign in' : 'Create account'}
         </button>
 
-        <p className="auth-toggle">
+        <p className={styles.toggle}>
           {authMode === 'login' ? "Don't have an account?" : 'Already have an account?'}
           <button onClick={onToggleMode}>
             {authMode === 'login' ? 'Register' : 'Sign in'}

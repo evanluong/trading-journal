@@ -1,17 +1,16 @@
-.gambling-form {
+.form {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* reuse .form-field styles from TradeForm.css */
-.gambling-form .form-field {
+.field {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.gambling-form .form-field label {
+.field label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -19,7 +18,7 @@
   color: var(--text-label);
 }
 
-.gambling-form .form-field input {
+.field input {
   padding: 9px 12px;
   background: var(--bg);
   border: 1px solid var(--border);
@@ -29,26 +28,25 @@
   transition: border-color 0.15s;
 }
 
-.gambling-form .form-field input::placeholder {
+.field input::placeholder {
   color: var(--text-label);
 }
 
-.gambling-form .form-field input:focus {
+.field input:focus {
   border-color: var(--primary);
 }
 
-/* ── Date row with Today button ── */
-.date-row {
+.dateRow {
   display: flex;
   gap: 8px;
   align-items: center;
 }
 
-.date-row input[type="date"] {
+.dateRow input[type="date"] {
   flex: 1;
 }
 
-.btn-today {
+.btnToday {
   padding: 9px 14px;
   font-size: 12px;
   font-weight: 600;
@@ -61,25 +59,23 @@
   transition: background 0.15s, border-color 0.15s;
 }
 
-.btn-today:hover {
+.btnToday:hover {
   background: rgba(59, 130, 246, 0.18);
   border-color: var(--primary);
 }
 
-/* ── Overall stake / outcome ── */
-.overall-row {
+.overallRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 
-/* ── Game checkboxes ── */
-.game-checkboxes {
+.checkboxes {
   display: flex;
   gap: 20px;
 }
 
-.game-checkbox-label {
+.checkboxLabel {
   display: flex;
   align-items: center;
   gap: 7px;
@@ -89,7 +85,7 @@
   user-select: none;
 }
 
-.game-checkbox-label input[type="checkbox"] {
+.checkboxLabel input[type="checkbox"] {
   width: 15px;
   height: 15px;
   accent-color: var(--primary);
@@ -98,15 +94,14 @@
   border: none;
 }
 
-/* ── Per-game rows ── */
-.game-rows {
+.gameRows {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   overflow: hidden;
 }
 
-.game-rows__header,
-.game-row {
+.gameRowsHeader,
+.gameRow {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
@@ -114,7 +109,7 @@
   padding: 10px 14px;
 }
 
-.game-rows__header {
+.gameRowsHeader {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   font-size: 11px;
@@ -124,21 +119,21 @@
   color: var(--text-label);
 }
 
-.game-row {
+.gameRow {
   border-bottom: 1px solid var(--border);
 }
 
-.game-row:last-child {
+.gameRow:last-child {
   border-bottom: none;
 }
 
-.game-row__name {
+.gameRowName {
   font-size: 13px;
   font-weight: 500;
   color: var(--text);
 }
 
-.game-row input {
+.gameRow input {
   padding: 7px 10px;
   background: var(--bg);
   border: 1px solid var(--border);
@@ -149,17 +144,49 @@
   width: 100%;
 }
 
-.game-row input::placeholder {
+.gameRow input::placeholder {
   color: var(--text-label);
 }
 
-.game-row input:focus {
+.gameRow input:focus {
   border-color: var(--primary);
 }
 
-/* ── Actions ── */
-.gambling-form__actions {
+.actions {
   display: flex;
   gap: 10px;
   padding-top: 4px;
+}
+
+.btnSubmit {
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btnSubmit:hover {
+  opacity: 0.88;
+}
+
+.btnCancel {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.btnCancel:hover {
+  color: var(--text);
+  border-color: var(--text-secondary);
 }

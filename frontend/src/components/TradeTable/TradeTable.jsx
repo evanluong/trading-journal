@@ -1,4 +1,4 @@
-import './TradeTable.css'
+import styles from './TradeTable.module.css'
 
 function calculatePL(trade) {
   const entry = parseFloat(trade.entry_price)
@@ -10,15 +10,15 @@ function calculatePL(trade) {
 }
 
 export default function TradeTable({ trades, loading, onEdit, onDelete }) {
-  if (loading) return <div className="loading-state">Loading trades…</div>
+  if (loading) return <div className={styles.loadingState}>Loading trades…</div>
 
   if (trades.length === 0) {
-    return <div className="empty-state">No trades yet. Add your first trade above.</div>
+    return <div className={styles.emptyState}>No trades yet. Add your first trade above.</div>
   }
 
   return (
-    <div className="trade-table-wrap">
-      <table className="trade-table">
+    <div className={styles.wrap}>
+      <table className={styles.table}>
         <thead>
           <tr>
             <th>Symbol</th>
@@ -38,24 +38,24 @@ export default function TradeTable({ trades, loading, onEdit, onDelete }) {
             const plPositive = parseFloat(pl) >= 0
             return (
               <tr key={trade.id}>
-                <td><span className="symbol">{trade.symbol}</span></td>
+                <td><span className={styles.symbol}>{trade.symbol}</span></td>
                 <td>
-                  <span className={`badge badge--${trade.direction === 'LONG' ? 'long' : 'short'}`}>
+                  <span className={`${styles.badge} ${trade.direction === 'LONG' ? styles.badgeLong : styles.badgeShort}`}>
                     {trade.direction}
                   </span>
                 </td>
-                <td className="td-secondary">{trade.quantity}</td>
-                <td className="td-secondary">${trade.entry_price}</td>
-                <td className="td-secondary">${trade.exit_price}</td>
-                <td className={plPositive ? 'pl--profit' : 'pl--loss'}>
+                <td className={styles.tdSecondary}>{trade.quantity}</td>
+                <td className={styles.tdSecondary}>${trade.entry_price}</td>
+                <td className={styles.tdSecondary}>${trade.exit_price}</td>
+                <td className={plPositive ? styles.plProfit : styles.plLoss}>
                   {plPositive ? '+' : ''}${pl}
                 </td>
-                <td className="td-secondary">{trade.trade_date?.slice(0, 10)}</td>
-                <td className="td-secondary">{trade.notes || '—'}</td>
+                <td className={styles.tdSecondary}>{trade.trade_date?.slice(0, 10)}</td>
+                <td className={styles.tdSecondary}>{trade.notes || '—'}</td>
                 <td>
-                  <div className="actions">
-                    <button className="btn-edit"   onClick={() => onEdit(trade)}>Edit</button>
-                    <button className="btn-delete" onClick={() => onDelete(trade.id)}>Delete</button>
+                  <div className={styles.actions}>
+                    <button className={styles.btnEdit}   onClick={() => onEdit(trade)}>Edit</button>
+                    <button className={styles.btnDelete} onClick={() => onDelete(trade.id)}>Delete</button>
                   </div>
                 </td>
               </tr>

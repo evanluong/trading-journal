@@ -1,20 +1,20 @@
-.trade-form__grid {
+.grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 
-.form-field {
+.field {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.form-field--full {
+.fieldFull {
   grid-column: 1 / -1;
 }
 
-.form-field label {
+.field label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -22,8 +22,8 @@
   color: var(--text-label);
 }
 
-.form-field input,
-.form-field select {
+.field input,
+.field select {
   padding: 9px 12px;
   background: var(--bg);
   border: 1px solid var(--border);
@@ -33,27 +33,27 @@
   transition: border-color 0.15s;
 }
 
-.form-field input::placeholder {
+.field input::placeholder {
   color: var(--text-label);
 }
 
-.form-field input:focus,
-.form-field select:focus {
+.field input:focus,
+.field select:focus {
   border-color: var(--primary);
 }
 
-.form-field select option {
+.field select option {
   background: var(--surface);
 }
 
-.trade-form__actions {
+.actions {
   grid-column: 1 / -1;
   display: flex;
   gap: 10px;
   padding-top: 4px;
 }
 
-.btn-submit {
+.btnSubmit {
   padding: 10px 24px;
   font-size: 14px;
   font-weight: 600;
@@ -65,11 +65,11 @@
   transition: opacity 0.15s;
 }
 
-.btn-submit:hover {
+.btnSubmit:hover {
   opacity: 0.88;
 }
 
-.btn-cancel {
+.btnCancel {
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 500;
@@ -81,7 +81,7 @@
   transition: color 0.15s, border-color 0.15s;
 }
 
-.btn-cancel:hover {
+.btnCancel:hover {
   color: var(--text);
   border-color: var(--text-secondary);
 }

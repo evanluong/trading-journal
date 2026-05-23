@@ -14,7 +14,7 @@
 - Run the CREATE TABLE migration in backend/index.js comments before using the gambling feature
 
 ## Stack
-- **Frontend**: React 19 + Vite, plain inline styles (no CSS framework), single-file App.jsx
+- **Frontend**: React 19 + Vite, CSS Modules (.module.css), no CSS framework
 - **Backend**: Node.js + Express 5, PostgreSQL via `pg`, bcrypt + JWT auth
 - **DB**: Postgres, connection via `DATABASE_URL` env var
 - **Auth**: JWT (7d expiry), `JWT_SECRET` in `.env`
@@ -22,10 +22,26 @@
 ## Project structure
 ```
 trading-journal/
-  frontend/       # React app (port 5173 via Vite dev server)
-    src/App.jsx   # Entire frontend in one file
+  frontend/src/
+    App.jsx                          # Auth state + tab routing only
+    App.module.css
+    index.css                        # Global CSS variables and resets
+    pages/
+      TradingPage/                   # All trading state, API calls, layout
+      GamblingPage/                  # All gambling state, API calls, layout
+      ComingSoonPage/                # Placeholder for future tools
+    components/
+      Header/                        # Logo, tabs, user email, logout
+      Auth/                          # Login/register forms
+      Modal/                         # Reusable modal wrapper
+      StatsPanel/                    # Trading stats cards
+      TradeForm/                     # Add/edit trade form
+      TradeTable/                    # Trades table with P/L
+      GamblingStatsPanel/            # Gambling stats cards
+      GamblingForm/                  # Add/edit session form
+      GamblingTable/                 # Sessions table with results
   backend/
-    index.js      # Entire backend in one file (port 3000)
+    index.js      # Express server (port 3000)
     .env          # DATABASE_URL, JWT_SECRET
 ```
 

@@ -1,8 +1,7 @@
-import './TradeTable.css'
-import './GamblingTable.css'
+import styles from './GamblingTable.module.css'
 
 function sessionTotals(session) {
-  const games = session.games || []
+  const games   = session.games || []
   const stake   = games.reduce((s, g) => s + parseFloat(g.stake   || 0), 0)
   const outcome = games.reduce((s, g) => s + parseFloat(g.outcome || 0), 0)
   const pl      = outcome - stake
@@ -10,21 +9,21 @@ function sessionTotals(session) {
 }
 
 function resultLabel(pl) {
-  if (pl > 0)  return 'Win'
-  if (pl < 0)  return 'Loss'
+  if (pl > 0) return 'Win'
+  if (pl < 0) return 'Loss'
   return 'Push'
 }
 
 export default function GamblingTable({ sessions, loading, onEdit, onDelete }) {
-  if (loading) return <div className="loading-state">Loading sessions…</div>
+  if (loading) return <div className={styles.loadingState}>Loading sessions…</div>
 
   if (sessions.length === 0) {
-    return <div className="empty-state">No sessions yet. Add your first session above.</div>
+    return <div className={styles.emptyState}>No sessions yet. Add your first session above.</div>
   }
 
   return (
-    <div className="trade-table-wrap">
-      <table className="trade-table">
+    <div className={styles.wrap}>
+      <table className={styles.table}>
         <thead>
           <tr>
             <th>Date</th>
@@ -45,27 +44,27 @@ export default function GamblingTable({ sessions, loading, onEdit, onDelete }) {
             const result     = resultLabel(pl)
             return (
               <tr key={session.id}>
-                <td className="td-secondary">{session.session_date?.slice(0, 10)}</td>
+                <td className={styles.tdSecondary}>{session.session_date?.slice(0, 10)}</td>
                 <td>
-                  <div className="game-badge-list">
+                  <div className={styles.badgeList}>
                     {(session.games || []).map(g => (
-                      <span key={g.type} className="badge badge--game">{g.type}</span>
+                      <span key={g.type} className={`${styles.badge} ${styles.badgeGame}`}>{g.type}</span>
                     ))}
                   </div>
                 </td>
-                <td className="td-secondary">${stake.toFixed(2)}</td>
-                <td className="td-secondary">${outcome.toFixed(2)}</td>
-                <td className={plPositive ? 'pl--profit' : plZero ? '' : 'pl--loss'}>
+                <td className={styles.tdSecondary}>${stake.toFixed(2)}</td>
+                <td className={styles.tdSecondary}>${outcome.toFixed(2)}</td>
+                <td className={plPositive ? styles.plProfit : plZero ? '' : styles.plLoss}>
                   {plPositive ? '+' : ''}${pl.toFixed(2)}
                 </td>
                 <td>
-                  <span className={`badge badge--${result.toLowerCase()}`}>{result}</span>
+                  <span className={`${styles.badge} ${styles['badge' + result]}`}>{result}</span>
                 </td>
-                <td className="td-secondary">{session.notes || '—'}</td>
+                <td className={styles.tdSecondary}>{session.notes || '—'}</td>
                 <td>
-                  <div className="actions">
-                    <button className="btn-edit"   onClick={() => onEdit(session)}>Edit</button>
-                    <button className="btn-delete" onClick={() => onDelete(session.id)}>Delete</button>
+                  <div className={styles.actions}>
+                    <button className={styles.btnEdit}   onClick={() => onEdit(session)}>Edit</button>
+                    <button className={styles.btnDelete} onClick={() => onDelete(session.id)}>Delete</button>
                   </div>
                 </td>
               </tr>

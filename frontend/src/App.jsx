@@ -1,54 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
-import Auth               from './components/Auth'
-import Modal              from './components/Modal'
-import TradeForm          from './components/TradeForm'
-import StatsPanel         from './components/StatsPanel'
-import TradeTable         from './components/TradeTable'
-import GamblingForm       from './components/GamblingForm'
-import GamblingStatsPanel from './components/GamblingStatsPanel'
-import GamblingTable      from './components/GamblingTable'
+import Auth          from './components/Auth/Auth'
+import Header        from './components/Header/Header'
+import TradingPage   from './pages/TradingPage/TradingPage'
+import GamblingPage  from './pages/GamblingPage/GamblingPage'
+import ComingSoonPage from './pages/ComingSoonPage/ComingSoonPage'
 
 const API = 'http://localhost:3000'
-const EMPTY_FORM    = { symbol: '', direction: 'LONG', quantity: '', entry_price: '', exit_price: '', trade_date: '', notes: '' }
-const EMPTY_SESSION = { session_date: '', games: [], notes: '' }
-
-function calculatePL(trade) {
-  const entry = parseFloat(trade.entry_price)
-  const exit  = parseFloat(trade.exit_price)
-  const qty   = parseFloat(trade.quantity) || 1
-  return trade.direction === 'SHORT'
-    ? ((entry - exit) * qty).toFixed(2)
-    : ((exit  - entry) * qty).toFixed(2)
-}
-
-function calcStats(trades) {
-  if (trades.length === 0) return null
-  const pls     = trades.map(t => parseFloat(calculatePL(t)))
-  const totalPL = pls.reduce((a, b) => a + b, 0)
-  const wins    = pls.filter(pl => pl > 0).length
-  return {
-    totalPL:  totalPL.toFixed(2),
-    winRate:  ((wins / trades.length) * 100).toFixed(0),
-    count:    trades.length,
-    best:     Math.max(...pls).toFixed(2),
-  }
-}
-
-function calcGamblingStats(sessions) {
-  if (sessions.length === 0) return null
-  const pls = sessions.map(s =>
-    (s.games || []).reduce((sum, g) => sum + (parseFloat(g.outcome || 0) - parseFloat(g.stake || 0)), 0)
-  )
-  const totalPL = pls.reduce((a, b) => a + b, 0)
-  const wins    = pls.filter(pl => pl > 0).length
-  return {
-    totalPL: totalPL.toFixed(2),
-    winRate: ((wins / sessions.length) * 100).toFixed(0),
-    count:   sessions.length,
-    best:    Math.max(...pls).toFixed(2),
-  }
-}
 
 export default function App() {
   const [token,     setToken]     = useState(localStorage.getItem('token'))
@@ -56,54 +14,7 @@ export default function App() {
   const [authMode,  setAuthMode]  = useState('login')
   const [authForm,  setAuthForm]  = useState({ email: '', password: '' })
   const [authError, setAuthError] = useState('')
-
-  const [trades,    setTrades]    = useState([])
-  const [loading,   setLoading]   = useState(true)
-  const [showForm,  setShowForm]  = useState(false)
-  const [editingId, setEditingId] = useState(null)
-  const [form,      setForm]      = useState(EMPTY_FORM)
   const [activeTab, setActiveTab] = useState('trading')
-
-  const [sessions,          setSessions]          = useState([])
-  const [sessionsLoading,   setSessionsLoading]   = useState(true)
-  const [showSessionForm,   setShowSessionForm]   = useState(false)
-  const [editingSessionId,  setEditingSessionId]  = useState(null)
-  const [sessionInitialData, setSessionInitialData] = useState(EMPTY_SESSION)
-
-  useEffect(() => {
-    if (token) { fetchTrades(); fetchSessions() }
-    else { setLoading(false); setSessionsLoading(false) }
-  }, [token])
-
-  function authHeaders() {
-    return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-  }
-
-  function fetchTrades() {
-    fetch(`${API}/trades`, { headers: authHeaders() })
-      .then(res => {
-        if (res.status === 401 || res.status === 403) { handleLogout(); return }
-        return res.json()
-      })
-      .then(data => {
-        if (!Array.isArray(data)) return
-        setTrades(data)
-        setLoading(false)
-      })
-  }
-
-  function fetchSessions() {
-    fetch(`${API}/gambling-sessions`, { headers: authHeaders() })
-      .then(res => {
-        if (res.status === 401 || res.status === 403) { handleLogout(); return }
-        return res.json()
-      })
-      .then(data => {
-        if (!Array.isArray(data)) return
-        setSessions(data)
-        setSessionsLoading(false)
-      })
-  }
 
   function handleAuth(e) {
     e.preventDefault()
@@ -128,68 +39,6 @@ export default function App() {
     localStorage.removeItem('user')
     setToken(null)
     setUser(null)
-    setTrades([])
-  }
-
-  function closeModal() {
-    setShowForm(false)
-    setEditingId(null)
-    setForm(EMPTY_FORM)
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault()
-    const url    = editingId ? `${API}/trades/${editingId}` : `${API}/trades`
-    const method = editingId ? 'PUT' : 'POST'
-    fetch(url, { method, headers: authHeaders(), body: JSON.stringify(form) })
-      .then(() => { fetchTrades(); closeModal() })
-  }
-
-  function handleEdit(trade) {
-    setEditingId(trade.id)
-    setForm({
-      symbol:      trade.symbol,
-      direction:   trade.direction,
-      quantity:    trade.quantity,
-      entry_price: trade.entry_price,
-      exit_price:  trade.exit_price,
-      trade_date:  trade.trade_date?.slice(0, 10),
-      notes:       trade.notes || '',
-    })
-    setShowForm(true)
-  }
-
-  function handleDelete(id) {
-    fetch(`${API}/trades/${id}`, { method: 'DELETE', headers: authHeaders() })
-      .then(() => fetchTrades())
-  }
-
-  function closeSessionModal() {
-    setShowSessionForm(false)
-    setEditingSessionId(null)
-    setSessionInitialData(EMPTY_SESSION)
-  }
-
-  function handleSessionSubmit(data) {
-    const url    = editingSessionId ? `${API}/gambling-sessions/${editingSessionId}` : `${API}/gambling-sessions`
-    const method = editingSessionId ? 'PUT' : 'POST'
-    fetch(url, { method, headers: authHeaders(), body: JSON.stringify(data) })
-      .then(() => { fetchSessions(); closeSessionModal() })
-  }
-
-  function handleSessionEdit(session) {
-    setEditingSessionId(session.id)
-    setSessionInitialData({
-      session_date: session.session_date?.slice(0, 10) || '',
-      games:        session.games || [],
-      notes:        session.notes || '',
-    })
-    setShowSessionForm(true)
-  }
-
-  function handleSessionDelete(id) {
-    fetch(`${API}/gambling-sessions/${id}`, { method: 'DELETE', headers: authHeaders() })
-      .then(() => fetchSessions())
   }
 
   if (!token) {
@@ -207,109 +56,15 @@ export default function App() {
 
   return (
     <div className="app-wrapper">
-      <header className="app-header">
-        <div className="app-header__logo">
-          <div className="app-header__logo-icon">L</div>
-          Ledger
-        </div>
-        <nav className="tab-bar">
-          <button
-            className={`tab-btn${activeTab === 'trading' ? ' tab-btn--active' : ''}`}
-            onClick={() => setActiveTab('trading')}
-          >
-            Trading
-          </button>
-          <button
-            className={`tab-btn${activeTab === 'gambling' ? ' tab-btn--active' : ''}`}
-            onClick={() => setActiveTab('gambling')}
-          >
-            Gambling
-          </button>
-          <button
-            className={`tab-btn tab-btn--soon${activeTab === 'soon' ? ' tab-btn--active' : ''}`}
-            onClick={() => setActiveTab('soon')}
-          >
-            •••
-          </button>
-        </nav>
-        <div className="app-header__user">
-          <span className="app-header__email">{user?.email}</span>
-          <button className="btn-logout" onClick={handleLogout}>Logout</button>
-        </div>
-      </header>
-
-      {activeTab === 'trading' && (
-        <>
-          <div className="tab-actions">
-            <button className="btn-add-trade" onClick={() => setShowForm(true)}>+ Add Trade</button>
-          </div>
-          <StatsPanel stats={calcStats(trades)} />
-          <div className="card">
-            <p className="section-label">Your Trades</p>
-            <TradeTable
-              trades={trades}
-              loading={loading}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          </div>
-        </>
-      )}
-
-      {activeTab === 'gambling' && (
-        <>
-          <div className="tab-actions">
-            <button className="btn-add-trade" onClick={() => setShowSessionForm(true)}>+ Add Session</button>
-          </div>
-          <GamblingStatsPanel stats={calcGamblingStats(sessions)} />
-          <div className="card">
-            <p className="section-label">Your Sessions</p>
-            <GamblingTable
-              sessions={sessions}
-              loading={sessionsLoading}
-              onEdit={handleSessionEdit}
-              onDelete={handleSessionDelete}
-            />
-          </div>
-        </>
-      )}
-
-      {activeTab === 'soon' && (
-        <div className="coming-soon-card">
-          <p className="coming-soon-title">More tools</p>
-          <p className="coming-soon-sub">Coming soon</p>
-        </div>
-      )}
-
-      {showForm && (
-        <Modal
-          title={editingId ? 'Edit Trade' : 'New Trade'}
-          onClose={closeModal}
-        >
-          <TradeForm
-            form={form}
-            editingId={editingId}
-            onChange={e => setForm({ ...form, [e.target.name]: e.target.value })}
-            onSubmit={handleSubmit}
-            onCancel={closeModal}
-          />
-        </Modal>
-      )}
-
-      {showSessionForm && (
-        <Modal
-          title={editingSessionId ? 'Edit Session' : 'New Session'}
-          onClose={closeSessionModal}
-        >
-          <GamblingForm
-            key={editingSessionId || 'new'}
-            initialData={sessionInitialData}
-            editingId={editingSessionId}
-            onSubmit={handleSessionSubmit}
-            onCancel={closeSessionModal}
-          />
-        </Modal>
-      )}
+      <Header
+        user={user}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onLogout={handleLogout}
+      />
+      {activeTab === 'trading'  && <TradingPage   token={token} onLogout={handleLogout} />}
+      {activeTab === 'gambling' && <GamblingPage  token={token} onLogout={handleLogout} />}
+      {activeTab === 'soon'     && <ComingSoonPage />}
     </div>
   )
 }

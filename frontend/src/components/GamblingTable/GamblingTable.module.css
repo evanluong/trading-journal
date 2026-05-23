@@ -1,0 +1,131 @@
+.wrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 0 16px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-label);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.badgeList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.badgeGame {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--primary);
+}
+
+.badgeWin {
+  background: var(--profit-bg);
+  color: var(--profit);
+}
+
+.badgeLoss {
+  background: var(--loss-bg);
+  color: var(--loss);
+}
+
+.badgePush {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--text-secondary);
+}
+
+.plProfit {
+  font-weight: 600;
+  color: var(--profit);
+}
+
+.plLoss {
+  font-weight: 600;
+  color: var(--loss);
+}
+
+.tdSecondary {
+  color: var(--text-secondary);
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btnEdit {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--primary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btnEdit:hover {
+  border-color: var(--primary);
+}
+
+.btnDelete {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--loss);
+  background: var(--loss-bg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btnDelete:hover {
+  opacity: 0.8;
+}
+
+.emptyState,
+.loadingState {
+  text-align: center;
+  padding: 48px 0;
+  color: var(--text-label);
+  font-size: 14px;
+}

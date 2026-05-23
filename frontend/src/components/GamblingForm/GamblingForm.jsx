@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './GamblingForm.css'
+import styles from './GamblingForm.module.css'
 
 const GAME_OPTIONS = ['Blackjack', 'Roulette', 'Baccarat']
 
@@ -15,8 +15,8 @@ function distribute(total, count) {
 }
 
 export default function GamblingForm({ initialData, editingId, onSubmit, onCancel }) {
-  const [sessionDate,   setSessionDate]   = useState(initialData?.session_date || '')
-  const [overallStake,  setOverallStake]  = useState(() => {
+  const [sessionDate,    setSessionDate]    = useState(initialData?.session_date || '')
+  const [overallStake,   setOverallStake]   = useState(() => {
     const games = initialData?.games || []
     if (!games.length) return ''
     return games.reduce((s, g) => s + parseFloat(g.stake || 0), 0).toFixed(2)
@@ -43,12 +43,9 @@ export default function GamblingForm({ initialData, editingId, onSubmit, onCance
   }
 
   function toggleGame(gameType) {
-    let updated
-    if (isChecked(gameType)) {
-      updated = games.filter(g => g.type !== gameType)
-    } else {
-      updated = [...games, { type: gameType, stake: '', outcome: '' }]
-    }
+    const updated = isChecked(gameType)
+      ? games.filter(g => g.type !== gameType)
+      : [...games, { type: gameType, stake: '', outcome: '' }]
     setGames(redistributed(updated, overallStake, overallOutcome))
   }
 
@@ -72,25 +69,25 @@ export default function GamblingForm({ initialData, editingId, onSubmit, onCance
   }
 
   return (
-    <form onSubmit={handleSubmit} className="gambling-form">
+    <form onSubmit={handleSubmit} className={styles.form}>
 
-      <div className="form-field">
+      <div className={styles.field}>
         <label>Date</label>
-        <div className="date-row">
+        <div className={styles.dateRow}>
           <input
             type="date"
             value={sessionDate}
             onChange={e => setSessionDate(e.target.value)}
             required
           />
-          <button type="button" className="btn-today" onClick={() => setSessionDate(today())}>
+          <button type="button" className={styles.btnToday} onClick={() => setSessionDate(today())}>
             Today
           </button>
         </div>
       </div>
 
-      <div className="overall-row">
-        <div className="form-field">
+      <div className={styles.overallRow}>
+        <div className={styles.field}>
           <label>Overall Stake ($)</label>
           <input
             type="number"
@@ -99,7 +96,7 @@ export default function GamblingForm({ initialData, editingId, onSubmit, onCance
             onChange={e => handleOverallStake(e.target.value)}
           />
         </div>
-        <div className="form-field">
+        <div className={styles.field}>
           <label>Overall Outcome ($)</label>
           <input
             type="number"
@@ -110,11 +107,11 @@ export default function GamblingForm({ initialData, editingId, onSubmit, onCance
         </div>
       </div>
 
-      <div className="form-field">
+      <div className={styles.field}>
         <label>Games Played</label>
-        <div className="game-checkboxes">
+        <div className={styles.checkboxes}>
           {GAME_OPTIONS.map(game => (
-            <label key={game} className="game-checkbox-label">
+            <label key={game} className={styles.checkboxLabel}>
               <input
                 type="checkbox"
                 checked={isChecked(game)}
@@ -127,15 +124,15 @@ export default function GamblingForm({ initialData, editingId, onSubmit, onCance
       </div>
 
       {games.length > 0 && (
-        <div className="game-rows">
-          <div className="game-rows__header">
+        <div className={styles.gameRows}>
+          <div className={styles.gameRowsHeader}>
             <span>Game</span>
             <span>Stake ($)</span>
             <span>Outcome ($)</span>
           </div>
           {games.map(game => (
-            <div key={game.type} className="game-row">
-              <span className="game-row__name">{game.type}</span>
+            <div key={game.type} className={styles.gameRow}>
+              <span className={styles.gameRowName}>{game.type}</span>
               <input
                 type="number"
                 placeholder="0.00"
@@ -153,7 +150,7 @@ export default function GamblingForm({ initialData, editingId, onSubmit, onCance
         </div>
       )}
 
-      <div className="form-field">
+      <div className={styles.field}>
         <label>Notes</label>
         <input
           type="text"
@@ -163,12 +160,12 @@ export default function GamblingForm({ initialData, editingId, onSubmit, onCance
         />
       </div>
 
-      <div className="gambling-form__actions">
-        <button type="submit" className="btn-submit">
+      <div className={styles.actions}>
+        <button type="submit" className={styles.btnSubmit}>
           {editingId ? 'Update Session' : 'Add Session'}
         </button>
         {editingId && (
-          <button type="button" className="btn-cancel" onClick={onCancel}>Cancel</button>
+          <button type="button" className={styles.btnCancel} onClick={onCancel}>Cancel</button>
         )}
       </div>
 

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import './Modal.css'
+import styles from './Modal.module.css'
 
 export default function Modal({ title, onClose, children }) {
   useEffect(() => {
@@ -9,11 +9,11 @@ export default function Modal({ title, onClose, children }) {
   }, [onClose])
 
   return (
-    <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose() }}>
-      <div className="modal">
-        <div className="modal__header">
-          <span className="modal__title">{title}</span>
-          <button className="modal__close" onClick={onClose}>✕</button>
+    <div className={styles.overlay} onClick={e => { if (e.target === e.currentTarget) onClose() }}>
+      <div className={styles.modal}>
+        <div className={styles.header}>
+          <span className={styles.title}>{title}</span>
+          <button className={styles.close} onClick={onClose}>✕</button>
         </div>
         {children}
       </div>
