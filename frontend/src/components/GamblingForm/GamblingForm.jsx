@@ -4,7 +4,8 @@ import styles from './GamblingForm.module.css'
 const GAME_OPTIONS = ['Blackjack', 'Roulette', 'Baccarat', 'Slots']
 
 function today() {
-  return new Date().toISOString().slice(0, 10)
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 function toNum(v) {

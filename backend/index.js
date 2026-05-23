@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
+const { Pool, types } = require('pg');
+// Return DATE columns as plain strings (YYYY-MM-DD) instead of JS Date objects,
+// which shift the date when converted to UTC in Sydney timezone (UTC+10/+11).
+types.setTypeParser(1082, val => val);
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
