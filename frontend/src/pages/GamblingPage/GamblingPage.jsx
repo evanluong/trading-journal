@@ -5,8 +5,8 @@ import GamblingStatsPanel  from '../../components/GamblingStatsPanel/GamblingSta
 import GamblingForm        from '../../components/GamblingForm/GamblingForm'
 import GamblingTable       from '../../components/GamblingTable/GamblingTable'
 
-const API            = 'http://localhost:3000'
-const EMPTY_SESSION  = { session_date: '', games: [], notes: '' }
+const API           = 'http://localhost:3000'
+const EMPTY_SESSION = { session_date: '', games: [], notes: '', partner: null }
 
 function calcGamblingStats(sessions) {
   if (sessions.length === 0) return null
@@ -24,11 +24,12 @@ function calcGamblingStats(sessions) {
 }
 
 export default function GamblingPage({ token, onLogout }) {
-  const [sessions,         setSessions]         = useState([])
-  const [loading,          setLoading]          = useState(true)
-  const [showForm,         setShowForm]         = useState(false)
-  const [editingId,        setEditingId]        = useState(null)
-  const [sessionInitData,  setSessionInitData]  = useState(EMPTY_SESSION)
+  const [sessions,        setSessions]        = useState([])
+  const [loading,         setLoading]         = useState(true)
+  const [showForm,        setShowForm]        = useState(false)
+  const [editingId,       setEditingId]       = useState(null)
+  const [sessionInitData, setSessionInitData] = useState(EMPTY_SESSION)
+  const [partnerMode,     setPartnerMode]     = useState(false)
 
   useEffect(() => { fetchSessions() }, [])
 
@@ -53,6 +54,7 @@ export default function GamblingPage({ token, onLogout }) {
     setShowForm(false)
     setEditingId(null)
     setSessionInitData(EMPTY_SESSION)
+    setPartnerMode(false)
   }
 
   function handleSubmit(data) {
@@ -68,7 +70,9 @@ export default function GamblingPage({ token, onLogout }) {
       session_date: session.session_date?.slice(0, 10) || '',
       games:        session.games || [],
       notes:        session.notes || '',
+      partner:      session.partner || null,
     })
+    setPartnerMode(!!session.partner)
     setShowForm(true)
   }
 
@@ -76,6 +80,18 @@ export default function GamblingPage({ token, onLogout }) {
     fetch(`${API}/gambling-sessions/${id}`, { method: 'DELETE', headers: authHeaders() })
       .then(() => fetchSessions())
   }
+
+  const partnerToggle = (
+    <label className={styles.partnerToggle}>
+      <input
+        type="checkbox"
+        checked={partnerMode}
+        onChange={e => setPartnerMode(e.target.checked)}
+      />
+      <span className={styles.toggleSlider} />
+      <span className={styles.toggleLabel}>Partner Mode</span>
+    </label>
+  )
 
   return (
     <div>
@@ -96,10 +112,16 @@ export default function GamblingPage({ token, onLogout }) {
       </div>
 
       {showForm && (
-        <Modal title={editingId ? 'Edit Session' : 'New Session'} onClose={closeModal}>
+        <Modal
+          title={editingId ? 'Edit Session' : 'New Session'}
+          headerExtra={partnerToggle}
+          wide={partnerMode}
+          onClose={closeModal}
+        >
           <GamblingForm
             key={editingId || 'new'}
             initialData={sessionInitData}
+            partnerMode={partnerMode}
             editingId={editingId}
             onSubmit={handleSubmit}
             onCancel={closeModal}

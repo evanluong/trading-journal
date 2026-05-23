@@ -122,15 +122,6 @@ app.delete('/trades/:id', authenticateToken, async (req, res) => {
 })
 
 // ── Gambling sessions ──────────────────────────────────────────────────────
-// Required migration (run once in your DB):
-// CREATE TABLE gambling_sessions (
-//   id           SERIAL PRIMARY KEY,
-//   user_id      INTEGER REFERENCES users(id),
-//   session_date DATE NOT NULL,
-//   games        JSONB NOT NULL DEFAULT '[]',
-//   notes        TEXT,
-//   created_at   TIMESTAMPTZ DEFAULT NOW()
-// );
 
 app.get('/gambling-sessions', authenticateToken, async (req, res) => {
   try {
@@ -146,11 +137,11 @@ app.get('/gambling-sessions', authenticateToken, async (req, res) => {
 })
 
 app.post('/gambling-sessions', authenticateToken, async (req, res) => {
-  const { session_date, games, notes } = req.body
+  const { session_date, games, notes, partner } = req.body
   try {
     const result = await pool.query(
-      'INSERT INTO gambling_sessions (session_date, games, notes, user_id) VALUES ($1, $2, $3, $4) RETURNING *',
-      [session_date, JSON.stringify(games), notes, req.user.id]
+      'INSERT INTO gambling_sessions (session_date, games, notes, partner, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [session_date, JSON.stringify(games), notes, partner ? JSON.stringify(partner) : null, req.user.id]
     )
     res.status(201).json(result.rows[0])
   } catch (err) {
@@ -161,11 +152,11 @@ app.post('/gambling-sessions', authenticateToken, async (req, res) => {
 
 app.put('/gambling-sessions/:id', authenticateToken, async (req, res) => {
   const { id } = req.params
-  const { session_date, games, notes } = req.body
+  const { session_date, games, notes, partner } = req.body
   try {
     const result = await pool.query(
-      'UPDATE gambling_sessions SET session_date=$1, games=$2, notes=$3 WHERE id=$4 AND user_id=$5 RETURNING *',
-      [session_date, JSON.stringify(games), notes, id, req.user.id]
+      'UPDATE gambling_sessions SET session_date=$1, games=$2, notes=$3, partner=$4 WHERE id=$5 AND user_id=$6 RETURNING *',
+      [session_date, JSON.stringify(games), notes, partner ? JSON.stringify(partner) : null, id, req.user.id]
     )
     res.json(result.rows[0])
   } catch (err) {

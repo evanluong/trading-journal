@@ -64,10 +64,20 @@
   border-color: var(--primary);
 }
 
-.overallRow {
+.bottomRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
+}
+
+.profitsDisplay {
+  padding: 9px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .checkboxes {
@@ -103,10 +113,15 @@
 .gameRowsHeader,
 .gameRow {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
+}
+
+.gameRowsHeaderPartner,
+.gameRowPartner {
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
 .gameRowsHeader {
@@ -150,6 +165,156 @@
 
 .gameRow input:focus {
   border-color: var(--primary);
+}
+
+/* ── Partner split columns ── */
+.splitGrid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.splitCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+}
+
+.splitColHeader {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
+}
+
+.splitDivider {
+  width: 1px;
+  background: var(--border);
+  align-self: stretch;
+}
+
+/* ── Calculated overall totals ── */
+.overallCalc {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+}
+
+.overallCalcItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.overallCalcLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-label);
+}
+
+.overallCalcValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.3px;
+}
+
+/* ── Profit split section ── */
+.profitSplit {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.profitSplitTitle {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-label);
+  padding: 10px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.profitSplitGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.profitCard {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profitCard:first-child {
+  border-right: 1px solid var(--border);
+}
+
+.profitCardName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.profitPct {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(59, 130, 246, 0.12);
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.profitRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.profitRow span:first-child {
+  color: var(--text-label);
+  font-size: 12px;
+}
+
+.gameEarnings {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.earningsProfit { color: var(--profit); }
+.earningsLoss   { color: var(--loss); }
+
+.profit { color: var(--profit); font-weight: 600; }
+.loss   { color: var(--loss);   font-weight: 600; }
+
+.formError {
+  font-size: 13px;
+  color: var(--loss);
+  background: var(--loss-bg);
+  border: 1px solid var(--loss);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
 }
 
 .actions {

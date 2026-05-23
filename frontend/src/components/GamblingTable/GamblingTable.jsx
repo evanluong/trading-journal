@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import styles from './GamblingTable.module.css'
 
 function sessionTotals(session) {
@@ -15,8 +17,32 @@ function resultLabel(pl) {
 }
 
 export default function GamblingTable({ sessions, loading, onEdit, onDelete }) {
-  if (loading) return <div className={styles.loadingState}>Loading sessions…</div>
+  const [expandedStake, setExpandedStake] = useState(null)
+  const [dropPos,       setDropPos]       = useState({ top: 0, left: 0 })
 
+  function handleStakeClick(sessionId, e) {
+    e.stopPropagation()
+    if (expandedStake === sessionId) {
+      setExpandedStake(null)
+      return
+    }
+    const rect = e.currentTarget.getBoundingClientRect()
+    setDropPos({ top: rect.bottom + 6, left: rect.left })
+    setExpandedStake(sessionId)
+  }
+
+  useEffect(() => {
+    if (!expandedStake) return
+    function close() { setExpandedStake(null) }
+    document.addEventListener('click', close)
+    document.addEventListener('scroll', close, true)
+    return () => {
+      document.removeEventListener('click', close)
+      document.removeEventListener('scroll', close, true)
+    }
+  }, [expandedStake])
+
+  if (loading) return <div className={styles.loadingState}>Loading sessions…</div>
   if (sessions.length === 0) {
     return <div className={styles.emptyState}>No sessions yet. Add your first session above.</div>
   }
@@ -27,6 +53,7 @@ export default function GamblingTable({ sessions, loading, onEdit, onDelete }) {
         <thead>
           <tr>
             <th>Date</th>
+            <th>Mode</th>
             <th>Games</th>
             <th>Stake</th>
             <th>Outcome</th>
@@ -42,9 +69,18 @@ export default function GamblingTable({ sessions, loading, onEdit, onDelete }) {
             const plPositive = pl > 0
             const plZero     = pl === 0
             const result     = resultLabel(pl)
+            const hasPartner = !!session.partner
+            const stakeOpen  = expandedStake === session.id
+
             return (
               <tr key={session.id}>
                 <td className={styles.tdSecondary}>{session.session_date?.slice(0, 10)}</td>
+                <td>
+                  {hasPartner
+                    ? <span className={`${styles.badge} ${styles.badgePartner}`}>👥 {session.partner.name || 'Partner'}</span>
+                    : <span className={`${styles.badge} ${styles.badgeSolo}`}>Solo</span>
+                  }
+                </td>
                 <td>
                   <div className={styles.badgeList}>
                     {(session.games || []).map(g => (
@@ -52,7 +88,32 @@ export default function GamblingTable({ sessions, loading, onEdit, onDelete }) {
                     ))}
                   </div>
                 </td>
-                <td className={styles.tdSecondary}>${stake.toFixed(2)}</td>
+                <td>
+                  {hasPartner ? (
+                    <button
+                      className={`${styles.stakeAmount} ${stakeOpen ? styles.stakeAmountOpen : ''}`}
+                      onClick={e => handleStakeClick(session.id, e)}
+                    >
+                      ${stake.toFixed(2)}
+                    </button>
+                  ) : (
+                    <span className={styles.tdSecondary}>${stake.toFixed(2)}</span>
+                  )}
+
+                  {hasPartner && stakeOpen && createPortal(
+                    <div className={styles.stakeBreakdown} style={{ top: dropPos.top, left: dropPos.left }}>
+                      <div className={styles.stakeRow}>
+                        <span>You</span>
+                        <span>${parseFloat(session.partner.my_stake || 0).toFixed(2)}</span>
+                      </div>
+                      <div className={styles.stakeRow}>
+                        <span>{session.partner.name || 'Partner'}</span>
+                        <span>${parseFloat(session.partner.partner_stake || 0).toFixed(2)}</span>
+                      </div>
+                    </div>,
+                    document.body
+                  )}
+                </td>
                 <td className={styles.tdSecondary}>${outcome.toFixed(2)}</td>
                 <td className={plPositive ? styles.plProfit : plZero ? '' : styles.plLoss}>
                   {plPositive ? '+' : ''}${pl.toFixed(2)}
