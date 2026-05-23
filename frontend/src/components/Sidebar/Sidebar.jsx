@@ -3,7 +3,7 @@ import styles from './Sidebar.module.css'
 const TABS = [
   { id: 'trading',  label: 'Trading' },
   { id: 'gambling', label: 'Gambling' },
-  { id: 'soon',     label: '•••' },
+  { id: 'soon',     label: 'Sport Betting' },
 ]
 
 export default function Sidebar({ open, user, activeTab, onTabChange, onLogout, onClose }) {

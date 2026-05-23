@@ -3,7 +3,7 @@ import styles from './Header.module.css'
 const PAGE_TITLES = {
   trading:  'Trading Dashboard',
   gambling: 'Gambling Dashboard',
-  soon:     'Coming Soon',
+  soon:     'Sport Betting',
 }
 
 export default function Header({ activeTab, onMenuClick }) {
